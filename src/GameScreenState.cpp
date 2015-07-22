@@ -8,6 +8,7 @@ GameScreenState::GameScreenState() {
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
 	level.push_back(rectangle(sf::Vector2f(200, 200), sf::Vector2f(400, 250)));
+	level.push_back(rectangle(sf::Vector2f(400, 60), sf::Vector2f(450, 250)));
 	updateSprites();
 }
 
@@ -65,8 +66,8 @@ void GameScreenState::update(const sf::Time& time) {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 		if (velocity.y == 0) velocity.y = -100; // FIXME
 	}
-	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 19.9), pos + sf::Vector2f(20, 19.9));
-	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
+	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 18), pos + sf::Vector2f(20, 18));
+	rectangle me_ey = rectangle(pos - sf::Vector2f(18, 20), pos + sf::Vector2f(18, 20));
 	for (unsigned int i = 0; i < level.size(); i++) {
 		//if (!level[i].intersects(me_ex)) continue;
 		//if (!((level[i].minp.x > me.maxp.x) || (me.minp.x > level[i].maxp.x))) {
