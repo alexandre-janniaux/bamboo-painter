@@ -14,7 +14,7 @@ class ScreenState {
     virtual ~ScreenState()=default;    
 
     virtual void event(const sf::Event& event)=0;
-    virtual void render(const sf::RenderTarget& target)=0;
+    virtual void render(sf::RenderTarget& target)=0;
     virtual void update(const sf::Time& time)=0;
 
 };
