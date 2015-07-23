@@ -19,10 +19,13 @@ GameScreenState::GameScreenState() {
 	level.push_back(rectangle(sf::Vector2f(200, 400), sf::Vector2f(400, 450), 2));
 	level.push_back(rectangle(sf::Vector2f(400, 260), sf::Vector2f(450, 450), 3));
 	level.push_back(rectangle(sf::Vector2f(100, 200), sf::Vector2f(200, 450), 1));
+	level.push_back(rectangle(sf::Vector2f(95, 200), sf::Vector2f(100, 455), 2));
+	level.push_back(rectangle(sf::Vector2f(200, 200), sf::Vector2f(205, 455), 2));
+	level.push_back(rectangle(sf::Vector2f(100, 450), sf::Vector2f(200, 455), 2));
 	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(600, 2), 3));
 	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(2, 600), 3));
-	level.push_back(rectangle(sf::Vector2f(600, 0), sf::Vector2f(602, 600), 3));
-	level.push_back(rectangle(sf::Vector2f(0, 600), sf::Vector2f(600, 602), 3));
+	level.push_back(rectangle(sf::Vector2f(600, 0), sf::Vector2f(602, 602), 3));
+	level.push_back(rectangle(sf::Vector2f(0, 600), sf::Vector2f(602, 602), 3));
 	updateSprites();
 }
 
@@ -85,9 +88,11 @@ void GameScreenState::update(const sf::Time& time) {
 				break;
 			case 2:
 			case 3:
-				velocity.y = std::max(velocity.y - 150, (float)-1000);
+				velocity.y -= 150;
 		}
 	}
+	velocity.x = std::max(std::min(velocity.x, (float)1500), (float)-1500);
+	velocity.y = std::max(std::min(velocity.y, (float)1500), (float)-1500);
 	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 19.9), pos + sf::Vector2f(20, 19.9));
 	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
