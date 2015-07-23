@@ -19,6 +19,10 @@ GameScreenState::GameScreenState() {
 	level.push_back(rectangle(sf::Vector2f(200, 400), sf::Vector2f(400, 450), 2));
 	level.push_back(rectangle(sf::Vector2f(400, 260), sf::Vector2f(450, 450), 3));
 	level.push_back(rectangle(sf::Vector2f(100, 200), sf::Vector2f(200, 450), 1));
+	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(600, 2), 3));
+	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(2, 600), 3));
+	level.push_back(rectangle(sf::Vector2f(600, 0), sf::Vector2f(602, 600), 3));
+	level.push_back(rectangle(sf::Vector2f(0, 600), sf::Vector2f(600, 602), 3));
 	updateSprites();
 }
 
@@ -66,16 +70,23 @@ void GameScreenState::update(const sf::Time& time) {
 	pos += velocity * s;
 	sf::Vector2f oldv = velocity;
 	velocity += s * acceleration;
-	acceleration = sf::Vector2f(0, 80);
+	acceleration = sf::Vector2f(0, 240);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		velocity.x = std::min(velocity.x + 200 * s, (float)100);
+		velocity.x = std::min(velocity.x + 400 * s, (float)200);
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		velocity.x = std::max(velocity.x - 200 * s, (float)-100);
+		velocity.x = std::max(velocity.x - 400 * s, (float)-200);
 	} else {
 		//velocity.x = 0;
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		if (touching_walls[BOTTOM]) velocity.y = -150;
+		switch (touching_walls[BOTTOM]) {
+			case 1:
+				velocity.y -= 500 * s;
+				break;
+			case 2:
+			case 3:
+				velocity.y = std::max(velocity.y - 150, (float)-1000);
+		}
 	}
 	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 19.9), pos + sf::Vector2f(20, 19.9));
 	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
@@ -83,7 +94,7 @@ void GameScreenState::update(const sf::Time& time) {
 	for (unsigned int i = 0; i < level.size(); i++) {
 		if (level[i].color < 2) continue; // Not solid
 		if (level[i].intersects(me_ex)) {
-			if (me_ey.minp.x >= level[i].minp.x) {
+			if (me_ey.maxp.x >= level[i].maxp.x) {
 				if (me_ey.minp.x >= level[i].maxp.x + oldv.x * s) {
 					float d = std::max(level[i].maxp.x - me_ex.minp.x, (float)0);
 					pos.x += d;
@@ -91,7 +102,7 @@ void GameScreenState::update(const sf::Time& time) {
 					me_ey.movex(d);
 				}
 			}
-			if (me_ey.maxp.x <= level[i].maxp.x) {
+			if (me_ey.minp.x <= level[i].minp.x) {
 				if (me_ey.maxp.x <= level[i].minp.x + oldv.x * s) {
 					float d = std::min(level[i].minp.x - me_ex.maxp.x, (float)0);
 					pos.x += d;
@@ -101,7 +112,7 @@ void GameScreenState::update(const sf::Time& time) {
 			}
 		}
 		if (level[i].intersects(me_ey)) {
-			if (me_ex.minp.y >= level[i].minp.y) {
+			if (me_ex.maxp.y >= level[i].maxp.y) {
 				if (me_ex.minp.y >= level[i].maxp.y + oldv.y * s) {
 					float d = std::max(level[i].maxp.y - me_ey.minp.y, (float)0);
 					pos.y += d;
@@ -109,7 +120,7 @@ void GameScreenState::update(const sf::Time& time) {
 					me_ey.movey(d);
 				}
 			}
-			if (me_ex.maxp.y <= level[i].maxp.y) {
+			if (me_ex.minp.y <= level[i].minp.y) {
 				if (me_ex.maxp.y <= level[i].minp.y + oldv.y * s) {
 					float d = std::min(level[i].minp.y - me_ey.maxp.y, (float)0); 
 					pos.y += d;
