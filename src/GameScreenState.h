@@ -10,6 +10,9 @@ struct rectangle {
 	rectangle(sf::Vector2f minp_, sf::Vector2f maxp_, unsigned char color_ = 0) {
 		minp = minp_; maxp = maxp_; color = color_;
 	};
+	rectangle(float minx, float miny, float maxx, float maxy, unsigned char color_ = 0) {
+		minp.x = minx; minp.y = miny; maxp.x = maxx; maxp.y = maxy; color = color_;
+	};
 	const inline bool contains(const sf::Vector2f &p) const {
 		return (minp.x <= p.x) && (p.x <= maxp.x) &&
 			(minp.y <= p.y) && (p.y <= maxp.y);
@@ -49,7 +52,8 @@ class GameScreenState : public ScreenState {
 	sf::Vector2f pos;
 	sf::Vector2f velocity;
 	sf::Vector2f acceleration;
-	unsigned char touching_walls[4]; 
+	unsigned char touching_walls[4];
+	rectangle level_bbox;
 	void updateSprites();
 
 };

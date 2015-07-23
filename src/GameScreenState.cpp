@@ -11,21 +11,29 @@ const unsigned char BOTTOM = 1;
 const unsigned char LEFT = 2;
 const unsigned char RIGHT = 3;
 
+inline float clamp(float x, float min, float max) {
+	 return std::max(std::min(x, max), min);
+}
+
 GameScreenState::GameScreenState() {
 	pos = sf::Vector2f(300, 100);
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
+	level_bbox = rectangle(0, 0, 3000, 600);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
-	level.push_back(rectangle(sf::Vector2f(200, 400), sf::Vector2f(400, 450), 2));
-	level.push_back(rectangle(sf::Vector2f(400, 260), sf::Vector2f(450, 450), 3));
-	level.push_back(rectangle(sf::Vector2f(100, 200), sf::Vector2f(200, 450), 1));
-	level.push_back(rectangle(sf::Vector2f(95, 200), sf::Vector2f(100, 455), 2));
-	level.push_back(rectangle(sf::Vector2f(200, 200), sf::Vector2f(205, 455), 2));
-	level.push_back(rectangle(sf::Vector2f(100, 450), sf::Vector2f(200, 455), 2));
-	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(600, 2), 3));
-	level.push_back(rectangle(sf::Vector2f(0, 0), sf::Vector2f(2, 600), 3));
-	level.push_back(rectangle(sf::Vector2f(600, 0), sf::Vector2f(602, 602), 3));
-	level.push_back(rectangle(sf::Vector2f(0, 600), sf::Vector2f(602, 602), 3));
+	level.push_back(rectangle(200, 400, 400, 450, 2));
+	level.push_back(rectangle(400, 260, 450, 450, 3));
+	level.push_back(rectangle(100, 200, 200, 450, 1));
+	level.push_back(rectangle(95, 200, 100, 455, 2));
+	level.push_back(rectangle(200, 200, 205, 455, 2));
+	level.push_back(rectangle(100, 450, 200, 455, 2));
+	level.push_back(rectangle(600, 450, 1000, 500, 2));
+	level.push_back(rectangle(1200, 300, 2500, 350, 2));
+
+	level.push_back(rectangle(0, 0, 3000, 2, 3));
+	level.push_back(rectangle(0, 0, 2, 600, 3));
+	level.push_back(rectangle(2998, 0, 3000, 600, 3));
+	level.push_back(rectangle(0, 598, 3000, 600, 3));
 	updateSprites();
 }
 
@@ -61,6 +69,15 @@ void GameScreenState::updateSprites() {
 
 void GameScreenState::render(sf::RenderTarget& target) {
 	updateSprites();
+	sf::View view = target.getDefaultView();
+	sf::Vector2f size = view.getSize();
+	sf::Vector2f center
+		(clamp(pos.x, level_bbox.minp.x + size.x / 2,
+			level_bbox.maxp.x - size.x / 2),
+		clamp(pos.y, level_bbox.minp.y + size.y / 2,
+			level_bbox.maxp.y - size.y / 2));
+	view.setCenter(center);
+	target.setView(view);
 	target.clear(sf::Color::White);
 	for (unsigned int i = 0; i < sprites.size(); i++) {
 		target.draw(sprites[i]);
@@ -70,8 +87,8 @@ void GameScreenState::render(sf::RenderTarget& target) {
 
 void GameScreenState::update(const sf::Time& time) {
 	float s = time.asSeconds();
-	pos += velocity * s;
-	sf::Vector2f oldv = velocity;
+	pos += velocity * s + ((float) 0.5) * s * s * acceleration;
+	sf::Vector2f oldv = velocity + ((float) 0.5) * s * acceleration;
 	velocity += s * acceleration;
 	acceleration = sf::Vector2f(0, 240);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
