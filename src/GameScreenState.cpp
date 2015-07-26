@@ -85,16 +85,17 @@ void GameScreenState::render(sf::RenderTarget& target) {
 }
 
 
+const float TIME_SPEED = 3;
 void GameScreenState::update(const sf::Time& time) {
-	float s = time.asSeconds();
+	float s = time.asSeconds() * TIME_SPEED;
 	pos += velocity * s + ((float) 0.5) * s * s * acceleration;
 	sf::Vector2f oldv = velocity + ((float) 0.5) * s * acceleration;
 	velocity += s * acceleration;
 	acceleration = sf::Vector2f(0, 240);
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		velocity.x = std::min(velocity.x + 400 * s, (float)200);
+		velocity.x = std::min(velocity.x + (float)400 * s, (float)200);
     } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-		velocity.x = std::max(velocity.x - 400 * s, (float)-200);
+		velocity.x = std::max(velocity.x - (float)400 * s, (float)-200);
 	} else {
 		//velocity.x = 0;
 	}
@@ -221,6 +222,11 @@ void GameScreenState::update(const sf::Time& time) {
 		case 2:
 			velocity.y = std::min(velocity.y, (float)0);
 			acceleration.y = std::min(acceleration.y, (float)0);
+			if (velocity.x > 0) {
+				velocity.x = std::max((float)0, velocity.x - (float)100 * s);
+			} else {
+				velocity.x = std::min((float)0, velocity.x + (float)100 * s);
+			}
 			break;
 		case 3:
 			velocity.y = std::min(velocity.y, -velocity.y);
@@ -228,4 +234,5 @@ void GameScreenState::update(const sf::Time& time) {
 			break;
 		default: break;
 	}
+	velocity.x *= pow(0.2, s);
 }
