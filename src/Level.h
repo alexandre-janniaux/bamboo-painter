@@ -39,6 +39,7 @@ class Level {
 
 	void render(sf::RenderTarget& target);
 
+	sf::Vector2f start_pos;
 	rectangle bbox;
 	std::vector<rectangle> boxes;
 

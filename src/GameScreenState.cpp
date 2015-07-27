@@ -16,7 +16,7 @@ inline float clamp(float x, float min, float max) {
 }
 
 GameScreenState::GameScreenState() {
-	pos = sf::Vector2f(300, 100);
+	pos = level.start_pos;
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
@@ -57,7 +57,7 @@ void GameScreenState::render(sf::RenderTarget& target) {
 }
 
 
-const float TIME_SPEED = 3;
+const float TIME_SPEED = 1;
 void GameScreenState::update(const sf::Time& time) {
 	float s = time.asSeconds() * TIME_SPEED;
 	pos += velocity * s + ((float) 0.5) * s * s * acceleration;

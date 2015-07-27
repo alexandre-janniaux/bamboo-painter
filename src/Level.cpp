@@ -2,6 +2,8 @@
 
 Level::Level() {
 	bbox = rectangle(0, 0, 3000, 600);
+	start_pos = sf::Vector2f(300, 100);
+
 	boxes.push_back(rectangle(200, 400, 400, 450, 2));
 	boxes.push_back(rectangle(400, 260, 450, 450, 3));
 	boxes.push_back(rectangle(100, 200, 200, 450, 1));
