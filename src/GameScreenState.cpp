@@ -19,21 +19,21 @@ GameScreenState::GameScreenState() {
 	pos = sf::Vector2f(300, 100);
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
-	level_bbox = rectangle(0, 0, 3000, 600);
+	level.bbox = rectangle(0, 0, 3000, 600);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
-	level.push_back(rectangle(200, 400, 400, 450, 2));
-	level.push_back(rectangle(400, 260, 450, 450, 3));
-	level.push_back(rectangle(100, 200, 200, 450, 1));
-	level.push_back(rectangle(95, 200, 100, 455, 2));
-	level.push_back(rectangle(200, 200, 205, 455, 2));
-	level.push_back(rectangle(100, 450, 200, 455, 2));
-	level.push_back(rectangle(600, 450, 1000, 500, 2));
-	level.push_back(rectangle(1200, 300, 2500, 350, 2));
+	level.boxes.push_back(rectangle(200, 400, 400, 450, 2));
+	level.boxes.push_back(rectangle(400, 260, 450, 450, 3));
+	level.boxes.push_back(rectangle(100, 200, 200, 450, 1));
+	level.boxes.push_back(rectangle(95, 200, 100, 455, 2));
+	level.boxes.push_back(rectangle(200, 200, 205, 455, 2));
+	level.boxes.push_back(rectangle(100, 450, 200, 455, 2));
+	level.boxes.push_back(rectangle(600, 450, 1000, 500, 2));
+	level.boxes.push_back(rectangle(1200, 300, 2500, 350, 2));
 
-	level.push_back(rectangle(0, 0, 3000, 2, 3));
-	level.push_back(rectangle(0, 0, 2, 600, 3));
-	level.push_back(rectangle(2998, 0, 3000, 600, 3));
-	level.push_back(rectangle(0, 598, 3000, 600, 3));
+	level.boxes.push_back(rectangle(0, 0, 3000, 2, 3));
+	level.boxes.push_back(rectangle(0, 0, 2, 600, 3));
+	level.boxes.push_back(rectangle(2998, 0, 3000, 600, 3));
+	level.boxes.push_back(rectangle(0, 598, 3000, 600, 3));
 	updateSprites();
 }
 
@@ -43,21 +43,21 @@ void GameScreenState::event(const sf::Event& event) {
 
 void GameScreenState::updateSprites() {
 	sprites.clear();
-	sprites.resize(level.size() + 1);
+	sprites.resize(level.boxes.size() + 1);
 	static sf::Color colors[4] = {sf::Color::White, sf::Color::Blue, sf::Color::Black, sf::Color::Yellow};
-	for (unsigned int i = 0; i < level.size(); i++) {
+	for (unsigned int i = 0; i < level.boxes.size(); i++) {
 		sf::RectangleShape sprite;
 		//sf::Sprite sprite;
 		//sf::Texture tex;
-		sprite.setSize(level[i].maxp - level[i].minp);
-		sprite.setFillColor(colors[level[i].color]);
+		sprite.setSize(level.boxes[i].maxp - level.boxes[i].minp);
+		sprite.setFillColor(colors[level.boxes[i].color]);
 		//sprite.setTextureRect(sf::IntRect(0, 0,
 		//	(int)(level[i].maxp.x - level[i].minp.x),
 		//	(int)(level[i].maxp.y - level[i].minp.y)));
 		//tex.create((int)(level[i].maxp.x - level[i].minp.x),
 		//			(int)(level[i].maxp.y - level[i].minp.y));
 		//sprite.setTexture(tex);
-		sprite.setPosition(level[i].minp);
+		sprite.setPosition(level.boxes[i].minp);
 		sprites.push_back(sprite);
 	}
 	sf::RectangleShape sprite;
@@ -72,10 +72,10 @@ void GameScreenState::render(sf::RenderTarget& target) {
 	sf::View view = target.getDefaultView();
 	sf::Vector2f size = view.getSize();
 	sf::Vector2f center
-		(clamp(pos.x, level_bbox.minp.x + size.x / 2,
-			level_bbox.maxp.x - size.x / 2),
-		clamp(pos.y, level_bbox.minp.y + size.y / 2,
-			level_bbox.maxp.y - size.y / 2));
+		(clamp(pos.x, level.bbox.minp.x + size.x / 2,
+			level.bbox.maxp.x - size.x / 2),
+		clamp(pos.y, level.bbox.minp.y + size.y / 2,
+			level.bbox.maxp.y - size.y / 2));
 	view.setCenter(center);
 	target.setView(view);
 	target.clear(sf::Color::White);
@@ -114,38 +114,38 @@ void GameScreenState::update(const sf::Time& time) {
 	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 19.9), pos + sf::Vector2f(20, 19.9));
 	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
-	for (unsigned int i = 0; i < level.size(); i++) {
-		if (level[i].color < 2) continue; // Not solid
-		if (level[i].intersects(me_ex)) {
-			if (me_ey.maxp.x >= level[i].maxp.x) {
-				if (me_ey.minp.x >= level[i].maxp.x + oldv.x * s) {
-					float d = std::max(level[i].maxp.x - me_ex.minp.x, (float)0);
+	for (unsigned int i = 0; i < level.boxes.size(); i++) {
+		if (level.boxes[i].color < 2) continue; // Not solid
+		if (level.boxes[i].intersects(me_ex)) {
+			if (me_ey.maxp.x >= level.boxes[i].maxp.x) {
+				if (me_ey.minp.x >= level.boxes[i].maxp.x + oldv.x * s) {
+					float d = std::max(level.boxes[i].maxp.x - me_ex.minp.x, (float)0);
 					pos.x += d;
 					me_ex.movex(d);
 					me_ey.movex(d);
 				}
 			}
-			if (me_ey.minp.x <= level[i].minp.x) {
-				if (me_ey.maxp.x <= level[i].minp.x + oldv.x * s) {
-					float d = std::min(level[i].minp.x - me_ex.maxp.x, (float)0);
+			if (me_ey.minp.x <= level.boxes[i].minp.x) {
+				if (me_ey.maxp.x <= level.boxes[i].minp.x + oldv.x * s) {
+					float d = std::min(level.boxes[i].minp.x - me_ex.maxp.x, (float)0);
 					pos.x += d;
 					me_ex.movex(d);
 					me_ey.movex(d);
 				}
 			}
 		}
-		if (level[i].intersects(me_ey)) {
-			if (me_ex.maxp.y >= level[i].maxp.y) {
-				if (me_ex.minp.y >= level[i].maxp.y + oldv.y * s) {
-					float d = std::max(level[i].maxp.y - me_ey.minp.y, (float)0);
+		if (level.boxes[i].intersects(me_ey)) {
+			if (me_ex.maxp.y >= level.boxes[i].maxp.y) {
+				if (me_ex.minp.y >= level.boxes[i].maxp.y + oldv.y * s) {
+					float d = std::max(level.boxes[i].maxp.y - me_ey.minp.y, (float)0);
 					pos.y += d;
 					me_ex.movey(d);
 					me_ey.movey(d);
 				}
 			}
-			if (me_ex.minp.y <= level[i].minp.y) {
-				if (me_ex.maxp.y <= level[i].minp.y + oldv.y * s) {
-					float d = std::min(level[i].minp.y - me_ey.maxp.y, (float)0); 
+			if (me_ex.minp.y <= level.boxes[i].minp.y) {
+				if (me_ex.maxp.y <= level.boxes[i].minp.y + oldv.y * s) {
+					float d = std::min(level.boxes[i].minp.y - me_ey.maxp.y, (float)0); 
 					pos.y += d;
 					me_ex.movey(d);
 					me_ey.movey(d);
@@ -154,21 +154,21 @@ void GameScreenState::update(const sf::Time& time) {
 		}
 	}
 	
-	for (unsigned int i = 0; i < level.size(); i++) {
-		if (level[i].intersects(me_ex)) {
-			if (me_ey.minp.x >= level[i].minp.x) {
-				touching_walls[LEFT] = std::max(touching_walls[LEFT], level[i].color);
+	for (unsigned int i = 0; i < level.boxes.size(); i++) {
+		if (level.boxes[i].intersects(me_ex)) {
+			if (me_ey.minp.x >= level.boxes[i].minp.x) {
+				touching_walls[LEFT] = std::max(touching_walls[LEFT], level.boxes[i].color);
 			}
-			if (me_ey.maxp.x <= level[i].maxp.x) {
-				touching_walls[RIGHT] = std::max(touching_walls[RIGHT], level[i].color);
+			if (me_ey.maxp.x <= level.boxes[i].maxp.x) {
+				touching_walls[RIGHT] = std::max(touching_walls[RIGHT], level.boxes[i].color);
 			}
 		}
-		if (level[i].intersects(me_ey)) {
-			if (me_ex.minp.y >= level[i].minp.y) {
-				touching_walls[TOP] = std::max(touching_walls[TOP], level[i].color);
+		if (level.boxes[i].intersects(me_ey)) {
+			if (me_ex.minp.y >= level.boxes[i].minp.y) {
+				touching_walls[TOP] = std::max(touching_walls[TOP], level.boxes[i].color);
 			}
-			if (me_ex.maxp.y <= level[i].maxp.y) {
-				touching_walls[BOTTOM] = std::max(touching_walls[BOTTOM], level[i].color);
+			if (me_ex.maxp.y <= level.boxes[i].maxp.y) {
+				touching_walls[BOTTOM] = std::max(touching_walls[BOTTOM], level.boxes[i].color);
 			}
 		}
 	}
