@@ -10,6 +10,7 @@ FIND_PACKAGE(SFML COMPONENTS audio graphics window system REQUIRED)
 SET(
     SRCS
     src/main.cpp
+    src/Level.cpp
     src/GameScreenState.cpp
 )
 

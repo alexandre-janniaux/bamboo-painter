@@ -34,9 +34,15 @@ struct rectangle {
 
 class Level {
 	public:
-	Level()=default;
+	Level();
 	virtual ~Level()=default;
+
+	void render(sf::RenderTarget& target);
 
 	rectangle bbox;
 	std::vector<rectangle> boxes;
+
+	private:
+	void updateSprites();
+	std::vector<sf::RectangleShape> sprites;
 };

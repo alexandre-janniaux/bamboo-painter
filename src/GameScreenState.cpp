@@ -19,21 +19,7 @@ GameScreenState::GameScreenState() {
 	pos = sf::Vector2f(300, 100);
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
-	level.bbox = rectangle(0, 0, 3000, 600);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
-	level.boxes.push_back(rectangle(200, 400, 400, 450, 2));
-	level.boxes.push_back(rectangle(400, 260, 450, 450, 3));
-	level.boxes.push_back(rectangle(100, 200, 200, 450, 1));
-	level.boxes.push_back(rectangle(95, 200, 100, 455, 2));
-	level.boxes.push_back(rectangle(200, 200, 205, 455, 2));
-	level.boxes.push_back(rectangle(100, 450, 200, 455, 2));
-	level.boxes.push_back(rectangle(600, 450, 1000, 500, 2));
-	level.boxes.push_back(rectangle(1200, 300, 2500, 350, 2));
-
-	level.boxes.push_back(rectangle(0, 0, 3000, 2, 3));
-	level.boxes.push_back(rectangle(0, 0, 2, 600, 3));
-	level.boxes.push_back(rectangle(2998, 0, 3000, 600, 3));
-	level.boxes.push_back(rectangle(0, 598, 3000, 600, 3));
 	updateSprites();
 }
 
@@ -43,23 +29,8 @@ void GameScreenState::event(const sf::Event& event) {
 
 void GameScreenState::updateSprites() {
 	sprites.clear();
-	sprites.resize(level.boxes.size() + 1);
-	static sf::Color colors[4] = {sf::Color::White, sf::Color::Blue, sf::Color::Black, sf::Color::Yellow};
-	for (unsigned int i = 0; i < level.boxes.size(); i++) {
-		sf::RectangleShape sprite;
-		//sf::Sprite sprite;
-		//sf::Texture tex;
-		sprite.setSize(level.boxes[i].maxp - level.boxes[i].minp);
-		sprite.setFillColor(colors[level.boxes[i].color]);
-		//sprite.setTextureRect(sf::IntRect(0, 0,
-		//	(int)(level[i].maxp.x - level[i].minp.x),
-		//	(int)(level[i].maxp.y - level[i].minp.y)));
-		//tex.create((int)(level[i].maxp.x - level[i].minp.x),
-		//			(int)(level[i].maxp.y - level[i].minp.y));
-		//sprite.setTexture(tex);
-		sprite.setPosition(level.boxes[i].minp);
-		sprites.push_back(sprite);
-	}
+	sprites.resize(1);
+
 	sf::RectangleShape sprite;
 	sprite.setSize(sf::Vector2f(40, 40));
 	sprite.setFillColor(sf::Color::Red);
@@ -79,6 +50,7 @@ void GameScreenState::render(sf::RenderTarget& target) {
 	view.setCenter(center);
 	target.setView(view);
 	target.clear(sf::Color::White);
+	level.render(target);
 	for (unsigned int i = 0; i < sprites.size(); i++) {
 		target.draw(sprites[i]);
 	}
