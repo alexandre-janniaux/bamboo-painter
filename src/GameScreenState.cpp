@@ -21,14 +21,6 @@ GameScreenState::GameScreenState() {
 	acceleration = sf::Vector2f(0, 0);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
 	updateSprites();
-	sf::Vector2f size (800.f, 600.f);
-	sf::Vector2f center
-		(clamp(pos.x, level.bbox.minp.x + size.x / 2,
-			level.bbox.maxp.x - size.x / 2),  
-		clamp(pos.y, level.bbox.minp.y + size.y / 2,
-			level.bbox.maxp.y - size.y / 2));
-	m_view.setCenter(center);
-	m_view.setSize(size);
 }
 
 void GameScreenState::event(const sf::RenderTarget& target, const sf::Event& event) {
@@ -46,18 +38,21 @@ void GameScreenState::updateSprites() {
 	sprites.push_back(sprite);
 }
 
-void GameScreenState::render(sf::RenderTarget& target) {
-	updateSprites();
-	//sf::View view = target.getDefaultView();
-	//sf::Vector2f size = view.getSize();
-	//view.setCenter(size/2.f);
-	//sf::Vector2f move(pos.x, pos.y);
-		/*(clamp(pos.x, level.bbox.minp.x + size.x / 2,
+void GameScreenState::updateView(sf::RenderTarget& target) {
+	sf::Vector2f size = (sf::Vector2f)target.getSize();
+	sf::Vector2f center
+		(clamp(pos.x, level.bbox.minp.x + size.x / 2,
 			level.bbox.maxp.x - size.x / 2),
 		clamp(pos.y, level.bbox.minp.y + size.y / 2,
-			level.bbox.maxp.y - size.y / 2));*/
-	//view.move(move);
+			level.bbox.maxp.y - size.y / 2));
+	m_view.setCenter(center);
+	m_view.setSize(size);
 	target.setView(m_view);
+}
+
+void GameScreenState::render(sf::RenderTarget& target) {
+	updateSprites();
+	updateView(target);
 	target.clear(sf::Color::White);
 	level.render(target);
 	for (unsigned int i = 0; i < sprites.size(); i++) {
