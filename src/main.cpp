@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "GameScreenState.h"
+#include "MenuScreenState.h"
 
 
 int main(int argc, char** argv) {
@@ -12,6 +13,7 @@ int main(int argc, char** argv) {
 	window.setFramerateLimit(60);
 
     // TODO: meilleur gestion des écrans de jeu
+	MenuScreenState menu_screen_state;
 	GameScreenState gameScreenState;
 
 	sf::Event event;
@@ -22,13 +24,16 @@ int main(int argc, char** argv) {
 	        if (event.type == sf::Event::Closed)
                 window.close();
             else 
-                gameScreenState.event(event);
+				//menu_screen_state.event(window, event);
+                gameScreenState.event(window, event);
 	    }
-
+		
 	    window.clear();
 	    gameScreenState.render(window);
+		//menu_screen_state.render(window);
 	    window.display();
         gameScreenState.update(clock.getElapsedTime());
+		//menu_screen_state.update(clock.getElapsedTime());
         clock.restart();
 	}
 }

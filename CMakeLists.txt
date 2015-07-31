@@ -12,6 +12,8 @@ SET(
     src/main.cpp
     src/Level.cpp
     src/GameScreenState.cpp
+    src/MenuScreenState.cpp
+    src/EditorView.cpp
 )
 
 ADD_EXECUTABLE(

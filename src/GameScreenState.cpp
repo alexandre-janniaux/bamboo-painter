@@ -21,10 +21,18 @@ GameScreenState::GameScreenState() {
 	acceleration = sf::Vector2f(0, 0);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
 	updateSprites();
+	sf::Vector2f size (800.f, 600.f);
+	sf::Vector2f center
+		(clamp(pos.x, level.bbox.minp.x + size.x / 2,
+			level.bbox.maxp.x - size.x / 2),  
+		clamp(pos.y, level.bbox.minp.y + size.y / 2,
+			level.bbox.maxp.y - size.y / 2));
+	m_view.setCenter(center);
+	m_view.setSize(size);
 }
 
-void GameScreenState::event(const sf::Event& event) {
-
+void GameScreenState::event(const sf::RenderTarget& target, const sf::Event& event) {
+	m_editor.push_event(target, event);
 }
 
 void GameScreenState::updateSprites() {
@@ -40,27 +48,31 @@ void GameScreenState::updateSprites() {
 
 void GameScreenState::render(sf::RenderTarget& target) {
 	updateSprites();
-	sf::View view = target.getDefaultView();
-	sf::Vector2f size = view.getSize();
-	sf::Vector2f center
-		(clamp(pos.x, level.bbox.minp.x + size.x / 2,
+	//sf::View view = target.getDefaultView();
+	//sf::Vector2f size = view.getSize();
+	//view.setCenter(size/2.f);
+	//sf::Vector2f move(pos.x, pos.y);
+		/*(clamp(pos.x, level.bbox.minp.x + size.x / 2,
 			level.bbox.maxp.x - size.x / 2),
 		clamp(pos.y, level.bbox.minp.y + size.y / 2,
-			level.bbox.maxp.y - size.y / 2));
-	view.setCenter(center);
-	target.setView(view);
+			level.bbox.maxp.y - size.y / 2));*/
+	//view.move(move);
+	target.setView(m_view);
 	target.clear(sf::Color::White);
 	level.render(target);
 	for (unsigned int i = 0; i < sprites.size(); i++) {
 		target.draw(sprites[i]);
 	}
+	m_editor.render(target);
 }
 
 
 const float TIME_SPEED = 1;
 void GameScreenState::update(const sf::Time& time) {
 	float s = time.asSeconds() * TIME_SPEED;
-	pos += velocity * s + ((float) 0.5) * s * s * acceleration;
+	sf::Vector2f offset = velocity * s + ((float) 0.5) * s * s * acceleration;
+	pos += offset;
+	m_view.move(offset);
 	sf::Vector2f oldv = velocity + ((float) 0.5) * s * acceleration;
 	velocity += s * acceleration;
 	acceleration = sf::Vector2f(0, 240);
@@ -93,6 +105,7 @@ void GameScreenState::update(const sf::Time& time) {
 				if (me_ey.minp.x >= level.boxes[i].maxp.x + oldv.x * s) {
 					float d = std::max(level.boxes[i].maxp.x - me_ex.minp.x, (float)0);
 					pos.x += d;
+					m_view.move(d,0);
 					me_ex.movex(d);
 					me_ey.movex(d);
 				}
@@ -101,6 +114,7 @@ void GameScreenState::update(const sf::Time& time) {
 				if (me_ey.maxp.x <= level.boxes[i].minp.x + oldv.x * s) {
 					float d = std::min(level.boxes[i].minp.x - me_ex.maxp.x, (float)0);
 					pos.x += d;
+					m_view.move(d,0);
 					me_ex.movex(d);
 					me_ey.movex(d);
 				}
@@ -111,6 +125,7 @@ void GameScreenState::update(const sf::Time& time) {
 				if (me_ex.minp.y >= level.boxes[i].maxp.y + oldv.y * s) {
 					float d = std::max(level.boxes[i].maxp.y - me_ey.minp.y, (float)0);
 					pos.y += d;
+					m_view.move(0.f,d);
 					me_ex.movey(d);
 					me_ey.movey(d);
 				}
@@ -119,6 +134,7 @@ void GameScreenState::update(const sf::Time& time) {
 				if (me_ex.maxp.y <= level.boxes[i].minp.y + oldv.y * s) {
 					float d = std::min(level.boxes[i].minp.y - me_ey.maxp.y, (float)0); 
 					pos.y += d;
+					m_view.move(0.f,d);
 					me_ex.movey(d);
 					me_ey.movey(d);
 				}
@@ -207,4 +223,6 @@ void GameScreenState::update(const sf::Time& time) {
 		default: break;
 	}
 	velocity.x *= pow(0.2, s);
+	
+	m_editor.update_mouse(sf::Mouse::getPosition());
 }
