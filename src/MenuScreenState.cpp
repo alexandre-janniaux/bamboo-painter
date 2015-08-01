@@ -26,3 +26,4 @@ void MenuScreenState::update(const sf::Time& time)
 {
 
 }
+

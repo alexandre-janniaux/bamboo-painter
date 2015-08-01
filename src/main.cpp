@@ -32,8 +32,10 @@ int main(int argc, char** argv) {
 	    gameScreenState.render(window);
 		//menu_screen_state.render(window);
 	    window.display();
+		gameScreenState.window_update(window);
         gameScreenState.update(clock.getElapsedTime());
 		//menu_screen_state.update(clock.getElapsedTime());
         clock.restart();
+		
 	}
 }

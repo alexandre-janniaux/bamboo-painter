@@ -219,5 +219,9 @@ void GameScreenState::update(const sf::Time& time) {
 	}
 	velocity.x *= pow(0.2, s);
 	
-	m_editor.update_mouse(sf::Mouse::getPosition());
+}
+
+void GameScreenState::window_update(const sf::RenderWindow& window)
+{
+	m_editor.update_mouse(sf::Mouse::getPosition(window));
 }
