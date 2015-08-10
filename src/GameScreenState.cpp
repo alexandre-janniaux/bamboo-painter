@@ -16,11 +16,16 @@ inline float clamp(float x, float min, float max) {
 }
 
 GameScreenState::GameScreenState() {
-	pos = level.start_pos;
+	advancement = 0;
+	resetPos();
+	updateSprites();
+}
+
+void GameScreenState::resetPos() {
+	pos = level.check_pos[advancement];
 	velocity = sf::Vector2f(0, 0);
 	acceleration = sf::Vector2f(0, 0);
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
-	updateSprites();
 }
 
 void GameScreenState::event(const sf::RenderTarget& target, const sf::Event& event) {
@@ -92,6 +97,7 @@ void GameScreenState::update(const sf::Time& time) {
 	velocity.y = std::max(std::min(velocity.y, (float)1500), (float)-1500);
 	rectangle me_ex = rectangle(pos - sf::Vector2f(20, 19.9), pos + sf::Vector2f(20, 19.9));
 	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
+	rectangle me = rectangle(pos - sf::Vector2f(20, 20), pos + sf::Vector2f(20, 20));
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
 	for (unsigned int i = 0; i < level.boxes.size(); i++) {
 		if (level.boxes[i].color < 2) continue; // Not solid
@@ -218,7 +224,21 @@ void GameScreenState::update(const sf::Time& time) {
 		default: break;
 	}
 	velocity.x *= pow(0.2, s);
+
+	rectangle checkpoint = rectangle(-10, -10, 10, 10);
+	for (unsigned int i = advancement; i < level.check_pos.size(); i++) {
+		if (me.intersects(checkpoint + level.check_pos[i])) {
+			advancement = i;
+		}
+	}
 	
+	if (pos.y > level.bbox.maxp.y) {
+		kill();
+	}
+}
+
+void GameScreenState::kill() {
+	resetPos();
 }
 
 void GameScreenState::window_update(const sf::RenderWindow& window)

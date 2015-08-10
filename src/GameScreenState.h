@@ -26,6 +26,9 @@ class GameScreenState : public ScreenState {
 	sf::Vector2f velocity;
 	sf::Vector2f acceleration;
 	unsigned char touching_walls[4];
+	int advancement;
+	void resetPos();
+	void kill();
 	void updateSprites();
 	void updateView(sf::RenderTarget& target);
 

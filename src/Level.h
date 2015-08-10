@@ -23,6 +23,12 @@ struct rectangle {
 			(other.maxp.y < minp.y) || (maxp.y < other.minp.y)
 		);
 	};
+	inline sf::Vector2f center() {
+		return sf::Vector2f((minp.x + maxp.x) / 2., (minp.y + maxp.y) / 2.);
+	};
+	rectangle operator + (const sf::Vector2f &p) {
+		return rectangle(minp + p, maxp + p, color);
+	};
 	inline void operator += (const sf::Vector2f &p) {
 		minp += p; maxp += p;
 	};
@@ -44,8 +50,10 @@ class Level {
 	sf::Vector2f start_pos;
 	rectangle bbox;
 	std::vector<rectangle> boxes;
+	std::vector<sf::Vector2f> check_pos;
 
 	private:
 	void updateSprites();
+	void addBorders();
 	std::vector<sf::RectangleShape> sprites;
 };
