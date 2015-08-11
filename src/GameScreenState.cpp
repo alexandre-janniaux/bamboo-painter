@@ -231,6 +231,15 @@ void GameScreenState::update(const sf::Time& time) {
 			break;
 		default: break;
 	}
+	if (touching_walls[TOP] >= 2 && touching_walls[BOTTOM] >= 2) {
+		velocity.y = 0;
+		acceleration.y = 0;
+	}
+	if (touching_walls[LEFT] >= 2 && touching_walls[RIGHT] >= 2) {
+		velocity.x = 0;
+		acceleration.x = 0;
+	}
+    
 	velocity.x *= pow(0.2, s);
 
 	rectangle checkpoint = rectangle(-10, -10, 10, 10);
