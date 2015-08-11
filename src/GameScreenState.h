@@ -32,4 +32,6 @@ class GameScreenState : public ScreenState {
 	void updateSprites();
 	void updateView(sf::RenderTarget& target);
 
+	unsigned char my_color;
+
 };

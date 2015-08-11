@@ -17,6 +17,7 @@ inline float clamp(float x, float min, float max) {
 
 GameScreenState::GameScreenState() {
 	advancement = 0;
+	my_color = 1;
 	resetPos();
 	updateSprites();
 }
@@ -29,6 +30,10 @@ void GameScreenState::resetPos() {
 }
 
 void GameScreenState::event(const sf::RenderTarget& target, const sf::Event& event) {
+	if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Space) {
+		my_color = (my_color + 1) % 3;
+		updateSprites();
+	}
 	m_editor.push_event(target, event);
 }
 
@@ -38,7 +43,9 @@ void GameScreenState::updateSprites() {
 
 	sf::RectangleShape sprite;
 	sprite.setSize(sf::Vector2f(40, 40));
-	sprite.setFillColor(sf::Color::Red);
+	//sprite.setFillColor(sf::Color::Red);
+	const sf::Color colors[3] = {sf::Color::Blue, sf::Color::Black, sf::Color::Yellow};
+	sprite.setFillColor(colors[my_color]);
 	sprite.setPosition(pos - sf::Vector2f(20, 20));
 	sprites.push_back(sprite);
 }
@@ -99,8 +106,9 @@ void GameScreenState::update(const sf::Time& time) {
 	rectangle me_ey = rectangle(pos - sf::Vector2f(19.9, 20), pos + sf::Vector2f(19.9, 20));
 	rectangle me = rectangle(pos - sf::Vector2f(20, 20), pos + sf::Vector2f(20, 20));
 	for (unsigned char i = 0; i < 4; i++) touching_walls[i] = 0;
+	#define icolor(box) ((unsigned char)(((box).color - my_color + 3) % 3 + 1))
 	for (unsigned int i = 0; i < level.boxes.size(); i++) {
-		if (level.boxes[i].color < 2) continue; // Not solid
+		if (icolor(level.boxes[i]) < 2) continue; // Not solid
 		if (level.boxes[i].intersects(me_ex)) {
 			if (me_ey.maxp.x >= level.boxes[i].maxp.x) {
 				if (me_ey.minp.x >= level.boxes[i].maxp.x + oldv.x * s) {
@@ -146,18 +154,18 @@ void GameScreenState::update(const sf::Time& time) {
 	for (unsigned int i = 0; i < level.boxes.size(); i++) {
 		if (level.boxes[i].intersects(me_ex)) {
 			if (me_ey.minp.x >= level.boxes[i].minp.x) {
-				touching_walls[LEFT] = std::max(touching_walls[LEFT], level.boxes[i].color);
+				touching_walls[LEFT] = std::max(touching_walls[LEFT], icolor(level.boxes[i]));
 			}
 			if (me_ey.maxp.x <= level.boxes[i].maxp.x) {
-				touching_walls[RIGHT] = std::max(touching_walls[RIGHT], level.boxes[i].color);
+				touching_walls[RIGHT] = std::max(touching_walls[RIGHT], icolor(level.boxes[i]));
 			}
 		}
 		if (level.boxes[i].intersects(me_ey)) {
 			if (me_ex.minp.y >= level.boxes[i].minp.y) {
-				touching_walls[TOP] = std::max(touching_walls[TOP], level.boxes[i].color);
+				touching_walls[TOP] = std::max(touching_walls[TOP], icolor(level.boxes[i]));
 			}
 			if (me_ex.maxp.y <= level.boxes[i].maxp.y) {
-				touching_walls[BOTTOM] = std::max(touching_walls[BOTTOM], level.boxes[i].color);
+				touching_walls[BOTTOM] = std::max(touching_walls[BOTTOM], icolor(level.boxes[i]));
 			}
 		}
 	}
@@ -226,9 +234,10 @@ void GameScreenState::update(const sf::Time& time) {
 	velocity.x *= pow(0.2, s);
 
 	rectangle checkpoint = rectangle(-10, -10, 10, 10);
-	for (unsigned int i = advancement; i < level.check_pos.size(); i++) {
+	for (unsigned int i = level.check_pos.size() - 1; i > advancement; i--) {
 		if (me.intersects(checkpoint + level.check_pos[i])) {
 			advancement = i;
+			break;
 		}
 	}
 	
