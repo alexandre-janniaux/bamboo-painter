@@ -14,6 +14,7 @@ SET(
     src/GameScreenState.cpp
     src/MenuScreenState.cpp
     src/EditorView.cpp
+    src/Stickman.cpp
 )
 
 ADD_EXECUTABLE(
