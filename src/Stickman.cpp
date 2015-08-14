@@ -14,11 +14,11 @@ StickmanModel::StickmanModel(float neck_size, float arm_size, float body_size, f
 	m_joints[2] = make_unique<GraphicsNode>(0.f, arm_size/2, std::vector<std::size_t>());
 	
 	// ARMS
-	m_joints[3] = make_unique<GraphicsNode>(pi/2, arm_size/2, std::vector<std::size_t>());
-	m_joints[4] = make_unique<GraphicsNode>(-pi/2, arm_size/2, std::vector<std::size_t>());
+	m_joints[3] = make_unique<GraphicsNode>(pi/2, arm_size/2, std::vector<std::size_t>({1}));
+	m_joints[4] = make_unique<GraphicsNode>(-pi/2, arm_size/2, std::vector<std::size_t>({2}));
 	
 	// NECK
-	m_joints[5] = make_unique<GraphicsNode>(0.f, body_size, std::vector<std::size_t>({3,4}));
+	m_joints[5] = make_unique<GraphicsNode>(0.f, body_size, std::vector<std::size_t>({0,3,4}));
 	
 	// FEET
 	m_joints[6] = make_unique<GraphicsNode>(0.f, leg_size/2, std::vector<std::size_t>());
@@ -52,7 +52,7 @@ void StickmanModel::computeNode(GraphicsNode& node, float angle)
 	for (std::size_t child : node.children) {
 		GraphicsNode& child_node = *m_joints.at(child);
 		float angle_tot = angle + child_node.angle;
-		child_node.position = node.position + child_node.distanceFromParent * sf::Vector2f({std::cos(angle_tot), std::sin(angle_tot)});
+		child_node.position = node.position + child_node.distanceFromParent * sf::Vector2f({std::cos(angle_tot), -std::sin(angle_tot)});
 		computeNode(child_node, angle_tot);
 	}
 }
@@ -93,12 +93,17 @@ void StickmanView::renderNode(sf::RenderTarget& target, const GraphicsNode& node
 	{
 		const GraphicsNode& child_node = *m_model->m_joints.at(child);
 		float angle_tot = angle + child_node.angle;
-		sf::RectangleShape shape({1.f, child_node.distanceFromParent});
+		sf::RectangleShape shape({child_node.distanceFromParent, 1.f});
 		shape.setPosition(node.position);
-		shape.setRotation(angle_tot);
-		target.draw(shape);
+		shape.setFillColor(sf::Color::Green);
+		shape.setRotation(- 180.f / pi * angle_tot);
+		target.draw(shape, getTransform());
 		renderNode(target, child_node, angle_tot);
 	}
+	sf::CircleShape shape2(3.f);
+	shape2.setPosition(node.position - sf::Vector2f(3.f, 3.f));
+	shape2.setFillColor(sf::Color::Red);
+	target.draw(shape2, getTransform());
 }
 
 void StickmanController::setModel(StickmanModel& model)

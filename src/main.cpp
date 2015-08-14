@@ -21,11 +21,11 @@ int main(int argc, char** argv) {
 	sf::Event event;
 	sf::Clock clock;
 
-	StickmanModel model(10.f, 10.f, 10.f, 10.f);
+	StickmanModel model(100.f, 100.f, 100.f, 100.f);
 
 	StickmanEditorView view;
 	view.setModel(model);
-	view.move(50.f, 50.f);
+	view.move(500.f, 500.f);
 
 	while (window.isOpen()) {
 	    while (window.pollEvent(event)) {
