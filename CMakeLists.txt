@@ -11,6 +11,7 @@ SET(
     SRCS
     src/main.cpp
     src/Level.cpp
+    src/ScreenStack.cpp
     src/GameScreenState.cpp
     src/MenuScreenState.cpp
     src/EditorView.cpp

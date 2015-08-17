@@ -10,6 +10,12 @@ namespace sf {
 
 class ScreenState {
     public:
+	
+	enum ScreenStateType {
+		Menu,
+		Game,
+		PauseGame
+	};
     
     ScreenState()=default;
     virtual ~ScreenState()=default;    
@@ -18,5 +24,11 @@ class ScreenState {
     virtual void render(sf::RenderTarget& target)=0;
     virtual void update(const sf::Time& time)=0;
     virtual void window_update(const sf::RenderWindow& window){};
+	
+	virtual void onStart(){};
+    virtual void onActivate(){};
+	virtual void onPause(){};
+	virtual void onStop(){};
+	
 
 };
