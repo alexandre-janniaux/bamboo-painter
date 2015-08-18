@@ -1,24 +1,6 @@
 #include "Level.h"
 
 Level::Level() {
-	bbox = rectangle(0, 0, 3000, 600);
-	check_pos.push_back(sf::Vector2f(300, 100));
-	// check_pos.push_back(sf::Vector2f(500, 50));
-	check_pos.push_back(sf::Vector2f(900, 400));
-	check_pos.push_back(sf::Vector2f(2400, 200));
-	// start_pos = sf::Vector2f(300, 100);
-
-	boxes.push_back(rectangle(200, 400, 400, 450, 2));
-	boxes.push_back(rectangle(400, 260, 450, 450, 3));
-	boxes.push_back(rectangle(100, 200, 200, 450, 1));
-	boxes.push_back(rectangle(95, 200, 100, 455, 2));
-	boxes.push_back(rectangle(200, 200, 205, 455, 2));
-	boxes.push_back(rectangle(100, 450, 200, 455, 2));
-	boxes.push_back(rectangle(600, 450, 1000, 500, 2));
-	boxes.push_back(rectangle(1200, 300, 2500, 350, 2));
-
-	addBorders();
-	updateSprites();
 }
 
 
