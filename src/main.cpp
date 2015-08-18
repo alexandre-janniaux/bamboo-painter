@@ -1,9 +1,10 @@
+#include "cpp_std_11.h"
+
 #include <SFML/Graphics.hpp>
 #include "GameScreenState.h"
 #include "MenuScreenState.h"
 #include "ScreenStack.h"
 
-#include "cpp_std_11.h"
 
 int main(int argc, char** argv) 
 {

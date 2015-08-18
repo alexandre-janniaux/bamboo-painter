@@ -18,6 +18,7 @@ inline float clamp(float x, float min, float max) {
 GameScreenState::GameScreenState() {
 	advancement = 0;
 	my_color = 1;
+	level = Level("./example.lvl");
 	resetPos();
 	updateSprites();
 }

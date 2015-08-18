@@ -21,6 +21,27 @@ Level::Level() {
 	updateSprites();
 }
 
+
+std::ostream& operator << (std::ostream &os, const Level &level) {
+	os << level.bbox << '\n' << level.check_pos << '\n' << level.boxes;
+	return os;
+}
+
+std::istream& operator >> (std::istream &is, Level &level) {
+	is >> level.bbox >> level.check_pos >> level.boxes;
+	level.updateSprites();
+	return is;
+}
+
+Level::Level(std::string path) {
+	std::ifstream file;
+	file.open(path, std::ios::in);
+	// std::cout << file.is_open() << std::endl;
+	file >> *this;
+	file.close();
+	// std::cout << *this;
+}
+
 void Level::addBorders() {
 	int bordersize = 10;
 	boxes.push_back(rectangle(bbox.minp.x - bordersize, bbox.minp.y - 100000,
@@ -59,3 +80,4 @@ void Level::render(sf::RenderTarget& target) {
 		target.draw(sprites[i]);
 	}
 }
+
