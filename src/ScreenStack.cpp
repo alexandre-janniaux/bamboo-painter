@@ -15,8 +15,9 @@ void ScreenStack::onDraw(sf::RenderTarget& target)
 
 void ScreenStack::onEvent(const sf::RenderTarget& target, const sf::Event& event)
 {
-	for(int id : m_stack) {
-		m_states.at(id)->event(target, event);
+	for (unsigned int i = m_stack.size() - 1; i >= 0; i--) {
+//	for(int id : m_stack) {
+		m_states.at(m_stack[i])->event(target, event);
 	}
 }
 

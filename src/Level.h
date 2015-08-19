@@ -73,6 +73,7 @@ struct rectangle {
 	};
 };
 
+
 inline std::ostream& operator << (std::ostream &os, const rectangle &rect) {
 	os << rect.minp << ' ' << rect.maxp << ' ' << (unsigned int) rect.color;
 	return os;
@@ -84,6 +85,7 @@ inline std::istream& operator >> (std::istream &is, rectangle &rect) {
 	rect.color = (unsigned char) c;
 	return is;
 }
+
 
 class Level {
 	public:
